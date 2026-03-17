@@ -1,0 +1,29 @@
+pack_directory = "resourcepack"
+output_file_path = "build/protected-resourcepack.zip"
+
+# Это и есть основной "анти-распаковочный" режим
+zip_spec_conformance_level = "disregard"
+
+# Делает ZIP ещё менее дружелюбным к сторонним распаковщикам/парсерам
+size_increasing_zip_obfuscation = true
+
+# Полезно для обычной оптимизации
+never_store_squash_times = true
+recompress_compressed_files = true
+
+# Оставь pack.mcmeta нетронутым
+["pack.mcmeta"]
+type = "passthrough"
+
+# PNG
+["**/*.png"]
+image_data_compression_iterations = 15
+skip_alpha_optimizations = false
+
+# JSON
+["**/*.json"]
+minify_json = true
+
+# OGG
+["**/*.ogg"]
+transcode_ogg = false
