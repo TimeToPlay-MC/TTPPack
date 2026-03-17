@@ -1,0 +1,47 @@
+name: Protect resource pack
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+    paths:
+      - "resourcepack/**"
+      - "packsquash.toml"
+      - ".github/workflows/protect-resourcepack.yml"
+
+jobs:
+  build-protected-pack:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v4
+        with:
+          options-file: packsquash.toml
+
+      - name: Generate SHA1
+        shell: bash
+        run: |
+          sha1sum build/protected-resourcepack.zip | awk '{print $1}' > build/protected-resourcepack.zip.sha1
+          echo "SHA1=$(cat build/protected-resourcepack.zip.sha1)" >> $GITHUB_ENV
+
+      - name: Show result
+        shell: bash
+        run: |
+          echo "Built file: build/protected-resourcepack.zip"
+          echo "SHA1: $SHA1"
+
+      - name: Upload protected pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: protected-resourcepack
+          path: |
+            build/protected-resourcepack.zip
+            build/protected-resourcepack.zip.sha1
+          if-no-files-found: error
